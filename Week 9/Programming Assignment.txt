@@ -12,15 +12,15 @@ ipconfig /all | Select-String -Pattern "DHCP Server"
 # Locates the DNS server IP using the same method as above
 ipconfig /all | Select-String -Pattern "\d\.\d\.\d\.\d"
 
-#  
+# Uses Get-Process to select specific properties and export them to the desktop
 Get-Process | Select-Object ProcessName, Path, ID | `
 Export-Csv -Path "$myDir\myProcesses.csv" -NoTypeInformation
 
-# Get running services
+# Uses Get-Service to collect information on services that are currently running and exports them to the desktop
 Get-Service | Where { $_.Status -eq "Running" } | Select-Object DisplayName, Status |`
 Export-Csv -Path "$myDir\myServices.csv" -NoTypeInformation
 
-# Open and close calculator
+# This opens and closes the calculator app
 Start-Process -FilePath "C:Windows\System32\calc.exe"
 sleep 2
 Stop-Process -Name CalculatorApp
