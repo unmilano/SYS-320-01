@@ -3,36 +3,35 @@
 function get_services() { 
     cls
 
-    # grab running services & create an array
+    # Retrieves a list of services using Get-Service
+    # Then uses Where-Object to filter services that are currently running
     $runningServices = Get-Service | Where { $_.Status -eq "running" }
     $arrRunning = @()
 
-    # Array for running services
+    # Iterates through each service and adds it to an array
     foreach ($tempRunning in $runningServices) {
         $arrRunning += $tempRunning
     }
 
 
-
-
-    # grab stopped services & create an array
+    # This filters stopped services using Get-Service and collects them
     $stoppedServices = Get-Service | Where { $_.Status -eq "stopped" }
     $arrStopped = @()
 
-    # Array for stopped services
+    # Iterates through each stopped service and adds it to an array
     foreach ($tempStopped in $stoppedServices) {
         $arrStopped += $tempStopped
  
     }
 
-    # Prompt for the user choose which prossess to view:
+    # Prompt for the user to choose which process to view:
     $readServices = Read-Host -Prompt "Do you want view all, running, or stopped services? Or 'q' to quit."
 
     # Checks if the user wants to quit:
     if ($readServices -match "^[qQ]$") {
         break
     
-    # ouputs the running services
+    # Then outputs the running services
     } elseif ($readServices -match "^running$") {
         write-host -BackgroundColor Green -ForegroundColor white "Please wait. It might take a few moments to retrieve running services."
         sleep 2
@@ -42,7 +41,7 @@ function get_services() {
     Read-Host -Prompt "Press enter when done."
     get_services
 
-    # ouputs the stopped services
+    # This outputs stopped services
     } elseif ($readServices -match "^stopped$") {
         write-host -BackgroundColor Green -ForegroundColor white "Please wait. It might take a few moments to retrieve stopped services."
         sleep 2
@@ -52,7 +51,7 @@ function get_services() {
     Read-Host -Prompt "Press enter when done."
     get_services
 
-    # ouputs all services
+    # This outputs all services
     } elseif ($readServices -match "^all$") {
         write-Host -BackgroundColor Green -ForegroundColor White "Please wait. It might take a few moments to retrieve all services."
         sleep 2
