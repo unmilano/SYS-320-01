@@ -1,3 +1,5 @@
 /Week 2
 
-ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+# uses the ip addr command then filters the local ip address using awk by searching for the values that come after inet
+
+ip addr | awk '/inet / {split($2, a, "/"); print a[1]}'
