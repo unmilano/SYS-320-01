@@ -1,0 +1,26 @@
+#Story
+#Display DHCP server's IP address and the DNS server IPs
+#Export your list of running processes and running services on your system into separate files.
+#Write a program that can start and stop the Windows Calculator only using Powershell and using only the process name for the Windows Calculator (to start and stop it).
+
+# Defining '$myDir', setting to the path of the user's desktop, as a directory to export files to
+$myDir = "C:\Users\%UserProfile%\Desktop\"
+
+# Locates the DHCP server info by filtering lines containing "DHCP Server"
+ipconfig /all | Select-String -Pattern "DHCP Server"
+
+# Locates the DNS server IP using the same method as above
+ipconfig /all | Select-String -Pattern "\d\.\d\.\d\.\d"
+
+#  
+Get-Process | Select-Object ProcessName, Path, ID | `
+Export-Csv -Path "$myDir\myProcesses.csv" -NoTypeInformation
+
+# Get running services
+Get-Service | Where { $_.Status -eq "Running" } | Select-Object DisplayName, Status |`
+Export-Csv -Path "$myDir\myServices.csv" -NoTypeInformation
+
+# Open and close calculator
+Start-Process -FilePath "C:Windows\System32\calc.exe"
+sleep 2
+Stop-Process -Name CalculatorApp
