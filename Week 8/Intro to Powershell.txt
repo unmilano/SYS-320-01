@@ -1,1 +1,17 @@
+# Storyline: Review the Security Event Log
 
+# Defining '$myDir', setting to the path of the user's desktop
+$myDir = "C:\Users\%UserProfile%\Desktop\"
+
+# List all of the available Windows Event Logs
+Get-EventLog -list
+
+# Creates a prompt to allow the user to select the Log to view
+$readLog = Read-host -Prompt "Please select a log to review from the list above"
+
+# Creates a prompt so the user can search the log through a specific keyword
+$searchLog = Read-host -Prompt "Please specify a keyword or phrase to search for"
+
+# This prints the log results, then exports them to the desktop as the file "securityLogs.csv"
+Get-EventLog -LogName $readLog -Newest 40 | where {$_.Message -ilike "*$searchLog*" } | export-csv -NoTypeInformation `
+-Path "$myDir\securityLogs.csv"
