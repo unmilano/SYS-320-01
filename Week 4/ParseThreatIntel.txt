@@ -16,7 +16,7 @@ function create_badIPs() {
 }
 
 
-# Check to see if the badIPs.txt file already exists and if not download it. (DELIVERABLE 1)
+# Check to see if the badIPs.txt file already exists and if not download it.
 		if [[ -f badIPs.txt  ]]
 		then
 			read -p "The badIPs.txt file already exists. Would you like to redownload it? [y][n]: " answer
@@ -39,8 +39,8 @@ function create_badIPs() {
 			create_badIPs
 		fi
 
-# Creating switches. Based on their selection, create an inbound drop rule for the respective firewall. (DELIVERABLE 2)
-# Switches for IPTables (I), Cisco (C), Netscreen (N), Windows Firewall (F), and Mac OS X (M). Also Parse TargetedThreats file (P)
+# Creating switches. Based on their selection, create an inbound drop rule for the respective firewall.
+# Switches for IPTables (I), Cisco (C), Netscreen (N), Windows Firewall (F), and Mac OS X (M). Also Parses TargetedThreats file (P)
 while getopts 'icnfmp' OPTION ; do
 
 	case "$OPTION" in
@@ -75,7 +75,7 @@ then
 	echo "Created IPTables firewall drop rules in file \"badips.iptables\""
 fi
 
-# Cisco
+# Same as above with Cisco
 if [[ ${cisco} ]]
 then
 	egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.0' badips.txt | tee badips.nocidr
@@ -90,7 +90,7 @@ fi
 
 # Netscreen
 
-# Windows Firewall
+# Same as above with Windows Firewall
 if [[ ${wfirewall} ]]
 then
 	egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.0' badips.txt | tee badips.windowsform
