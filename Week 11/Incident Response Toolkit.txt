@@ -1,1 +1,67 @@
 
+#Storyline: This code is going to take system information and place it inside a zip file. This code will also create the corresponding hash tables for the files that are being created
+
+# Prompt the user for the directory they want to save the results in
+$resultsDirectory = Read-Host "Please enter the full path of the directory where you want to save the results"
+
+function file-hash() {
+    
+    #Create the hashes for the corresponding files 
+    $hash = Get-FileHash -path $resultsDirectory/*csv -Algorithm SHA256
+
+    #creating a new file inside the specified directory which creates a checksum for the hashes 
+    $hash | Out-file $resultsDirectory\checksums.txt 
+}
+    
+
+# 1. Uses Join-Path to retrieve information about running processes
+# and exports the process names and their paths to a CSV file.
+$processesPath = Join-Path -Path $resultsDirectory -ChildPath "processes.csv"
+Get-Process | Select-Object Name, Path | Export-Csv -Path $processesPath -NoTypeInformation
+
+# 2. Uses WMI and Join-Path to retrieve registered services and exports their names and executable paths to a CSV file.
+$servicesPath = Join-Path -Path $resultsDirectory -ChildPath "services.csv"
+Get-WmiObject -Class Win32_Service | Select-Object Name, PathName | Export-Csv -Path $servicesPath -NoTypeInformation
+
+# 3. Uses Join-Path to retrieve information about TCP network connections and exports them to a CSV file.
+$tcpSocketsPath = Join-Path -Path $resultsDirectory -ChildPath "tcpSockets.csv"
+Get-NetTCPConnection | Export-Csv -Path $tcpSocketsPath -NoTypeInformation
+
+# 4. Uses WMI and Join-Path to retrieve user account information and exports them to a CSV file.
+$userAccountsPath = Join-Path -Path $resultsDirectory -ChildPath "userAccounts.csv"
+Get-WmiObject -Class Win32_UserAccount | Export-Csv -Path $userAccountsPath -NoTypeInformation
+
+# 5. All NetworkAdapterConfiguration information
+$networkAdaptersPath = Join-Path -Path $resultsDirectory -ChildPath "networkAdapterConfiguration.csv"
+Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Export-Csv -Path $networkAdaptersPath -NoTypeInformation
+
+# 6. Firewall profile information (this is a good thing to have in an incident report because it shows all the settings of the firewall. This can allow the user to check what settings are configured or not)
+$netFirewallProfile = Join-Path $resultsDirectory -ChildPath "netFirewallProfile.csv"
+Get-NetFirewallProfile | Export-Csv -path $netFirewallProfile -NoTypeInformation
+
+# 7. Checks for security events in logs(this is a useful cmdlet because it is going to show you the security events that are on the event log)
+$Securityeventlogs = Join-Path $resultsDirectory -ChildPath "Securityeventlogs.csv"
+Get-Eventlog -LogName Security | Export-csv -Path $Securityeventlogs -NoTypeInformation
+
+# 8. System event logs (this is also a useful cmdlet for incident response because it's going to show you the logs that are on your system)
+$SystemeventLogs = join-path $resultsDirectory -ChildPath "SystemEventLogs.csv"
+Get-Eventlog -LogName System | export-csv -path $SystemeventLogs -NoTypeInformation
+
+# 9. Application event logs (another event log that is useful to have because this will show you the status of the application on your computer as well as what applications have been installed. This can also show if an application was started or stopped on your computer) 
+$ApplEventLogs = Join-Path $resultsDirectory -ChildPath "AppEventLogs.csv"
+Get-Eventlog -LogName Application | export-csv -path $ApplEventLogs -NoTypeInformation
+
+# Creating the name of the zip file and telling it to park inside the directory the user chose at the beginning
+$zipfilepath = "$resultsDirectory\resultszip.zip"
+
+# Compresses the directory results into the zip file and saves it to the path the user chose
+Compress-Archive -Path $resultsDirectory\* -DestinationPath $zipfilepath -Force
+
+# Create a hash talbe for the zipfile, encrypting it so no one else can see it but you
+$zipfilehash = Get-FileHash -path $zipfilepath -Algorithm SHA256
+
+# Takes the hash table associated with the zip file and place it inside the directory chosen by the user
+$zipfilehash | Out-File $resultsDirectory\zipfilehash.txt
+
+# calls the hashing function to generate checksums for CSV in the specified directory then saves them in checksums.txt
+file-hash 
