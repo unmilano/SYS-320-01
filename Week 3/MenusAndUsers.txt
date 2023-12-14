@@ -2,6 +2,8 @@
 
 # Storyline: Menu for admin, VPN, and Security Functions
 
+
+# Displays an error message for an invalid option and sleeps for 2 seconds.
 function invalid_opt() {
 	echo ""
 	echo "Invalid Option"
@@ -10,7 +12,7 @@ function invalid_opt() {
 
 }
 
-
+# Displays a main menu with options for Admin, Security, and Exit. Calls different functions based on user's choice
 function menu () {
 
 	# Clears the screen
@@ -42,9 +44,10 @@ function menu () {
 
 }
 
+# Same deal as above, but for network functions.
 function admin_menu() {
 	clear	
-	echo "[L]ist Running Proccesses"
+	echo "[L]ist Running Processes"
 	echo "[N]etwork Sockets"
 	echo "[V]PN Menu"
 	echo "[4] Exit"
@@ -71,6 +74,8 @@ function admin_menu() {
 admin_menu
 }
 
+# Lets the user add or delete a peer, check if a user exists, and other baseline functions like returning to other menus
+# or exiting out of the menu altogether
 function vpn_menu() {
 	clear
 	echo "[A]dd a peer"
@@ -85,9 +90,9 @@ function vpn_menu() {
 	  bash peer.bash
 	  tail -6 wg0.conf |less
 	;;
-	D|d) #Create a promtp for the user
+	D|d) #Create a prompt for the user
 		read -p "Please specify a user" user
-		# Call the manage-users.bash and pass the proper switches and arguement
+		# Call the manage-users.bash and pass the proper switches and argument
 		bash manage-users.bash -d -u "$user"
 		#  to delete the user
 	;;
@@ -113,6 +118,7 @@ vpn_menu
 
 }
 
+# Lets user open network sockets, check the UID, views the last 10 logged users, and the currently logged in users.
 function security_menu() {
 	clear
 	echo "[O]pen Network Sockets"
